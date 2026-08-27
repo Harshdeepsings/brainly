@@ -20,7 +20,7 @@ const ContentSchema = new Schema({
 
 const TagSchema = new Schema({
     title: [{type: String, unique: true, trim: true, lowercase: true}],
-    ContentId: {type: mongoose.Types.ObjectId, ref: 'Content'}
+    
 });
 
 export const UserModel = model("User", UserSchema);
