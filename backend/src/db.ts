@@ -1,5 +1,6 @@
 import mongoose, { model, Schema } from "mongoose";
-import { ref } from "node:process";
+import { ref, title } from "node:process";
+import { lowercase } from "zod";
 
 
 const UserSchema = new Schema({
@@ -18,6 +19,7 @@ const ContentSchema = new Schema({
 });
 
 const TagSchema = new Schema({
+    title: [{type: String, unique: true, trim: true, lowercase: true}],
     ContentId: {type: mongoose.Types.ObjectId, ref: 'Content'}
 });
 
