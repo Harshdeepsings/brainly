@@ -1,6 +1,6 @@
 import mongoose, { model, Schema } from "mongoose";
-import { ref, title } from "node:process";
-import { lowercase } from "zod";
+
+
 
 
 const UserSchema = new Schema({
@@ -10,8 +10,9 @@ const UserSchema = new Schema({
 });
 
 const ContentSchema = new Schema({
-    title: String,
-    link: String,
+    title: {type:String, required: true, trim: true},
+    link: {type:String, required: true, trim: true},
+    type: {type: String, required: true, enum: ["youtube", "twitter"] },
     tags: [{type: mongoose.Types.ObjectId, ref: 'Tag'}],
     userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true}
     
@@ -19,10 +20,16 @@ const ContentSchema = new Schema({
 });
 
 const TagSchema = new Schema({
-    title: [{type: String, unique: true, trim: true, lowercase: true}],
+    title: [{type: String, unique: true, trim: true, lowercase: true}]
     
 });
+
+const LinkSchema = new Schema({
+    hash: {type: String, required: true, unique: true},
+    userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true , unique: true}
+})
 
 export const UserModel = model("User", UserSchema);
 export const ContentModel = model("Content", ContentSchema);
 export const TagModel = model("Tag", TagSchema);
+export const LinkModel = model("Link", LinkSchema);
