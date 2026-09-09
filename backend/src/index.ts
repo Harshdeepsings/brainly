@@ -27,13 +27,10 @@ const connectDB = async () => {
 };
 
 app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/user", userRoutes);
 
-app.use("/api/v1/content", contentRoutes);
 app.use("/api/v1/content", contentRoutes);
 
 app.use("/api/v1/brain/share", shareRoutes);
-app.use("/api/v1/brain/share", shareRoutes);
+
 
 connectDB();
