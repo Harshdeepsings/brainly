@@ -39,7 +39,27 @@ export function Card({id,title, link, type, onDelete}: CardProps){
                 <div className="flex justify-center items-center shrink-0">
                     
                     <div className="p-2 text-gray-600 dark:text-slate-400">
-                        <ShareIcon size="md" />
+                        <button
+                            onClick={async () => {
+                                const res = await fetch("http://localhost:3000/api/v1/brain/share/share", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Authorization": localStorage.getItem("token") || ""
+                                    },
+                                    body: JSON.stringify({ share: true })
+                                });
+                                const data = await res.json();
+                                const hash = data.hash || data.message;
+                                const shareUrl = `${window.location.origin}/share/${hash}`;
+                                await navigator.clipboard.writeText(shareUrl);
+                                alert("Share link copied!");
+                            }}
+                            className="p-2 text-gray-600 hover:text-blue-500 dark:text-slate-400 dark:hover:text-blue-400 transition cursor-pointer"
+                        >
+                            <ShareIcon size="md" />
+                        </button >
+
                     </div>
                     {onDelete && id && (
                         <button
