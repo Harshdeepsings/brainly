@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { Notebook } from "../icons/NotebookIcon";
 import { ShareIcon } from "../icons/ShareIcon";
+import { BACKEND_URI } from "../../config";
 
 
 interface CardProps {
@@ -41,7 +42,7 @@ export function Card({id,title, link, type, onDelete}: CardProps){
                     <div className="p-2 text-gray-600 dark:text-slate-400">
                         <button
                             onClick={async () => {
-                                const res = await fetch("http://localhost:3000/api/v1/brain/share/share", {
+                                const res = await fetch(`${BACKEND_URI}/api/v1/brain/share/share`, {
                                     method: "POST",
                                     headers: {
                                         "Content-Type": "application/json",
@@ -51,7 +52,7 @@ export function Card({id,title, link, type, onDelete}: CardProps){
                                 });
                                 const data = await res.json();
                                 const hash = data.hash || data.message;
-                                const shareUrl = `${window.location.origin}/share/${hash}`;
+                                const shareUrl = `${window.location.origin}/${hash}`;
                                 await navigator.clipboard.writeText(shareUrl);
                                 alert("Share link copied!");
                             }}
