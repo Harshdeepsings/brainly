@@ -1,0 +1,89 @@
+import { useState, useRef } from "react";
+import { CloseIcon } from "./icons/CloseIcon";
+import { Input } from "./InputComponent";
+import { Button } from "./ui/Button";
+import axios from "axios";
+import { BACKEND_URI } from "../config";
+
+interface ContentModalProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+enum ContentType {
+    YouTube = "youtube",
+    Twitter = "twitter"
+}
+
+export function ContentModal({open, onClose}: ContentModalProps){
+    const titleRef = useRef<HTMLInputElement>(null);
+    const linkRef = useRef<HTMLInputElement>(null);
+    const [type, setType] = useState(ContentType.YouTube)
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    async function addContent() {
+       const title = titleRef.current?.value; 
+       const link = linkRef.current?.value; 
+
+       try{
+            await axios.post(`${BACKEND_URI}/api/v1/content/post`,{
+                link,
+                title,
+                type
+            },{
+                headers: {
+                    "Authorization": localStorage.getItem("token")
+                }
+            })
+            onClose();
+        
+        }catch(e: any){
+                setError(e.response?.data?.message || "Incorrect credentials");
+            } finally {
+                setLoading(false);
+            }
+    }
+
+    return <div>
+        {open && <div className="w-full h-screen fixed inset-0 bg-gray-600/75 dark:bg-black/80 z-50 flex items-center justify-center p-4 overflow-y-auto" >
+                <div className="flex flex-col justify-center w-full max-w-sm my-auto">
+                    <div className="bg-white dark:bg-slate-800 dark:border dark:border-slate-700 p-4 rounded w-full shadow-lg text-gray-900 dark:text-slate-100">
+                        <div className="flex justify-end ">
+                            <div onClick={onClose} className="cursor-pointer text-gray-500 hover:text-gray-800 dark:text-slate-400 dark:hover:text-white">
+                                <CloseIcon size="md"/>
+                            </div>
+                        </div>
+
+                        <div>
+
+                            <Input reference={titleRef} placeholder= {"Title"} type="text" />
+                            <Input reference={linkRef} placeholder= {"Link"} type="text" />
+
+                        </div>
+
+                        <div>
+                            <h1 className="font-medium text-gray-700 dark:text-slate-300 mt-2">Type</h1>
+                                <div className="flex justify-center gap-2 p-4">
+                                    <Button text="Youtube" variant={type === ContentType.YouTube ? "primary": "secondary"}
+                                     size="md" onClick={() => setType(ContentType.YouTube)} />
+                                <Button text="Twitter" variant={type === ContentType.Twitter ? "primary": "secondary"}
+                                 size="md" onClick={() => setType(ContentType.Twitter)} />
+
+                                </div>
+                                
+                        </div>
+
+                        {error && (<div className="text-red-500 text-sm text-center pt-2">
+                                {error}
+                            </div>)}
+
+                        <div className="flex justify-center rounded pt-2">
+                            <Button onClick= {addContent} loading= {loading} variant="primary" text="Submit" size="lg" />
+                        </div>
+                    </div>
+                </div>
+            </div>}
+
+    </div>
+};
