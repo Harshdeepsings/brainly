@@ -10,12 +10,12 @@ const userRoutes = Router();
 
 userRoutes.post("/signup", async function(req: AuthRequest, res: Response){
     
-    const parsedDataWithSuccess = UserSchema.safeParse(req.body);
+    const ParsedDataWithSuccess = UserSchema.safeParse(req.body);
 
-        if(!parsedDataWithSuccess.success){
+        if(!ParsedDataWithSuccess.success){
             res.status(400).json({
                 message: "incorrect format",
-                error: parsedDataWithSuccess.error
+                error: ParsedDataWithSuccess.error
             })
             return
         }
